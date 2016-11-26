@@ -1,4 +1,5 @@
 // BUG: multiple calls add nested elements
+// TODO: add dictionary to background process
 
 (function() {
     var node = document.createElement('style');
@@ -15,10 +16,10 @@
 // ');
 
 addStyleString('\
-    .knownchinese { font-style: inherit; }\
-    .knownchinese.unknownword { background: -webkit-linear-gradient(left, transparent, rgba(255,0,0,.2), transparent); }\
-    .knownchinese.knownword { background: -webkit-linear-gradient(left, transparent, rgba(0,255,0,.33), transparent); }\
-    .knownchinese.knownchar { background: -webkit-linear-gradient(left, transparent, rgba(0,0,255,.2), transparent); }\
+                          .knownchinese-element { font-style: inherit; }\
+    .knownchinese-enabled .knownchinese-element.unknownword { background: -webkit-linear-gradient(left, transparent, rgba(255,0,0,.2), transparent); }\
+    .knownchinese-enabled .knownchinese-element.knownword { background: -webkit-linear-gradient(left, transparent, rgba(0,255,0,.33), transparent); }\
+    .knownchinese-enabled .knownchinese-element.knownchar { background: -webkit-linear-gradient(left, transparent, rgba(0,0,255,.2), transparent); }\
 ');
 
 var dictionary = {};
@@ -26,6 +27,8 @@ var currentKnownWords = 0;
 var currentUnknownWords = 0;
 var currentKnownChars = 0;
 var currentUnknownChars = 0;
+
+var currentState = 0;
 
 function parseDictionary(progressEvent){
     // Entire file
@@ -38,26 +41,22 @@ function parseDictionary(progressEvent){
             continue;
         }
 
-        var parsed = /([^\s]+) ([^\s]+) \[(.+)\] \/(.+)\//i.exec(lines[i]);
+        // var parsed = /([^\s]+) ([^\s]+) \[(.+)\] \/(.+)\//i.exec(lines[i]);
+        var parsed = /([^\s]+) ([^\s]+)/i.exec(lines[i]);
         var traditional = parsed[1];
         var simplified = parsed[2];
-        var pinin = parsed[3].split(' ');
-        var explanation = parsed[4].split('/');
+        // var pinin = parsed[3].split(' ');
+        // var explanation = parsed[4].split('/');
 
         if (/\w+/g.test(traditional)) {
             continue;
         }
 
-        // console.log(lines[i]);
-        // console.log(traditional);
-        // console.log(simplified);
-        // console.log(pinin);
-        // console.log(explanation);
         var entry = {
             'traditional': traditional,
             'simplified': simplified,
-            'pinin': pinin,
-            'explanation': explanation,
+            // 'pinin': pinin,
+            // 'explanation': explanation,
         }
         dictionary[simplified] = entry;
         dictionary[traditional] = entry;
@@ -70,23 +69,14 @@ oReq.addEventListener("load", parseDictionary);
 oReq.open("GET", chrome.runtime.getURL("cedict_ts.u8"));
 oReq.send();
 
-var promises = [oReq];
-
-Promise.all(promises).then(function() {
-    console.log('FINISHED');
-    // returned data is in arguments[0], arguments[1], ... arguments[n]
-    // you can process it here
-}, function(err) {
-    console.log('ERROR');
-    // error occurred
-});
-
 
 var knownChars;
 var knownWords;
 document.addEventListener('keydown', keyboardShortcuts);
 
 loadKnownChars();
+
+document.body.classList.add('knownchinese', 'knownchinese-enabled');
 
 function refresh() {
     currentKnownWords = 0;
@@ -148,13 +138,25 @@ function saveKnownChars() {
 
 
 function keyboardShortcuts(ev) {
-    if (ev.ctrlKey && ev.altKey && ev.keyCode==82) { // alt+r
+	console.log(ev);
+    if (ev.shiftKey && ev.altKey && ev.keyCode==82) { // r
+        removeHighlights();
         refresh();
         ev.stopPropagation();
-    } else if (ev.ctrlKey && ev.altKey && ev.keyCode==68) { // alt+d
+    } else if (ev.shiftKey && ev.altKey && ev.keyCode==65) { // a
         addToKnown(getSelectionText());
         saveKnownChars();
+    	removeHighlights();
         refresh();
+        ev.stopPropagation();
+    } else if (ev.shiftKey && ev.altKey && ev.keyCode==68) { // d
+        removeFromKnown(getSelectionText());
+        saveKnownChars();
+    	removeHighlights();
+        refresh();
+        ev.stopPropagation();
+    } else if (ev.shiftKey && ev.altKey && ev.keyCode==84) { // t
+        removeHighlights();
         ev.stopPropagation();
     }
 }
@@ -163,6 +165,13 @@ function addToKnown(text) {
     knownWords.add(text);
     for (var i=0; i<text.length; i++) {
         knownChars.add(text[i]);
+    }
+}
+
+function removeFromKnown(text) {
+    knownWords.delete(text);
+    if (text.length == 1) {
+    	knownChars.delete(text);
     }
 }
 
@@ -223,7 +232,9 @@ function handleText(textNode, parentNode) {
 }
 
 function highlightWords(textNode) {
-    var content = textNode.parentElement.innerHTML;
+    var content = textNode.data;
+
+	var temp = document.createElement('div');
 
     var newContent = "";
     var word = "";
@@ -243,15 +254,15 @@ function highlightWords(textNode) {
             }
             anyChange = true;
             if (knownWords.has(word)) {
-                newContent += "<i class='knownchinese knownword'>"+word+"</i>";
+                newContent += "<i class='knownchinese-element knownword'>"+word+"</i>";
                 currentKnownWords++;
                 currentKnownChars += word.length;
             } else {
                 currentUnknownWords++;
-                newContent += "<i class='knownchinese unknownword'>";
+                newContent += "<i class='knownchinese-element unknownword'>";
                 for (var j=0; j<word.length;j++) {
                     if (knownChars.has(word[j])) {
-                        newContent += "<i class='knownchinese knownchar'>"+word[j]+"</i>";
+                        newContent += "<i class='knownchinese-element knownchar'>"+word[j]+"</i>";
                         currentKnownChars++;
                     } else {
                         newContent += word[j];
@@ -266,8 +277,28 @@ function highlightWords(textNode) {
     }
 
     if (anyChange) {
-        textNode.parentElement.innerHTML = newContent;
+    	temp.innerHTML = newContent;
+
+	    while (temp.firstChild) {
+	        // console.log(textNode.parentNode, textNode, temp.firstChild);
+	        textNode.parentNode.insertBefore(temp.firstChild, textNode);
+	    }
+	    textNode.parentNode.removeChild(textNode);
+
+        // textNode.parentElement.innerHTML = newContent;
     }
 }
 
+function removeHighlights() {
+    
+    var nodes = null;
+	while((nodes = document.getElementsByClassName("knownchinese-element")).length > 0) {
+
+		for (var i=0; i<nodes.length; i++) {
+			var node = nodes[i];
+			node.parentNode.insertBefore(document.createTextNode(node.textContent), node);
+	    	node.parentNode.removeChild(node);
+		}
+	}
+}
 
