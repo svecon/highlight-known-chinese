@@ -1,2 +1,4 @@
-cedict_ts.u8
-frequencies.txt
+dictionaries/cedict_ts_full.u8
+dictionaries/frequencies.txt
+dictionaries/frequencies_full.txt
+known-chars.txt

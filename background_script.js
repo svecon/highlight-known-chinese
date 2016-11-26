@@ -4,7 +4,7 @@ var currentUnknownWords = 0;
 var currentKnownChars = 0;
 var currentUnknownChars = 0;
 
-var currentState = 0;
+var currentStatePerTab = {};
 
 function parseDictionary(progressEvent){
     // Entire file
@@ -35,12 +35,12 @@ function parseDictionary(progressEvent){
         dictionary[simplified] = entry;
         dictionary[traditional] = entry;
     }
-    console.log(Object.keys(dictionary).length);
+    // console.log(Object.keys(dictionary).length);
 };
 
 var oReq = new XMLHttpRequest();
 oReq.addEventListener("load", parseDictionary);
-oReq.open("GET", chrome.runtime.getURL("cedict_ts.u8"));
+oReq.open("GET", chrome.runtime.getURL("dictionaries/cedict_ts.u8"));
 oReq.send();
 
 var knownWords;
@@ -50,42 +50,43 @@ function loadKnownChars() {
     knownWords = new Set();
 
     chrome.storage.sync.get("data", function(storage) {
-        if (!chrome.runtime.error) {
-            savedWords = storage.data.split(',');
-
-            if (savedWords === null) { return; }
-
-            for (var i=0; i<savedWords.length; i++){
-                knownWords.add(savedWords[i]);
-            }
-            console.log('Loaded ' + savedWords.length + ' known words: ', savedWords);
+        if (chrome.runtime.error) {
+        	console.log("Runtime error.");
+        	return;
         }
+        if (storage.data === null) { return; }
+
+        knownWords = new Set(storage.data);
+        // console.log('Loaded ' + knownWords.size + ' known words: ', knownWords);
     });
 }
 
 function saveKnownChars() {
-    var knownWordsArray = [];
+    console.log('Saved ' + knownWords.size + ' known words: ', knownWords);
 
-    knownWords.forEach(function(v) {
-        if(dictionary[v] !== undefined) {
-            knownWordsArray.push(v);
-        }
-    });
-
-    console.log('Saved ' + knownWordsArray.length + ' known words: ', knownWordsArray);
-
-    chrome.storage.sync.set({ "data" : knownWordsArray.join(',') }, function() {
+    chrome.storage.sync.set({ data: Array.from(knownWords) }, function() {
         if (chrome.runtime.error) {
             console.log("Runtime error.");
         }
     });
 }
 
+function addAllToKnown(arr) {
+	for (var i=0; i<arr.length;i++) {
+		addToKnown(arr[i]);
+	}
+}
+
 function addToKnown(text) {
-    knownWords.add(text);
-    for (var i=0; i<text.length; i++) {
-        knownWords.add(text[i]);
+    if(dictionary[text] !== undefined) {
+        knownWords.add(text);
     }
+    
+    // for (var i=0; i<text.length; i++) {
+    // 	if(dictionary[text[i]] !== undefined) {
+	   //      knownWords.add(text[i]);
+	   //  }
+    // }
 }
 
 function removeFromKnown(text) {
@@ -117,5 +118,30 @@ chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 	if (request.want == "dictionary") {
 		sendResponse({dictionary: dictionary});
+	} else if (request.want == "knownwords") {
+		sendResponse({knownwords: Array.from(knownWords)});
+	} else if (request.want == "options") {
+		chrome.tabs.create({'url': chrome.extension.getURL('options.html'), 'selected': true});
+	} else if (request.want == "saveall") {
+		if(request.overwrite) {
+			knownWords = new Set();
+		}
+		addAllToKnown(request.input);
+		saveKnownChars();
+		sendResponse({knownwords: Array.from(knownWords)});
 	}
 });
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		
+		if (currentStatePerTab[tabs[0].id] === undefined) {
+			currentStatePerTab[tabs[0].id] = 0;
+			chrome.tabs.sendMessage(tabs[0].id, {enable: true});
+		} else {
+			delete currentStatePerTab[tabs[0].id];
+			chrome.tabs.sendMessage(tabs[0].id, {enable: false});
+		}
+	});
+});
+

@@ -1,7 +1,12 @@
-var dictionary = {};
-chrome.runtime.sendMessage({want: "dictionary"}, function(response) {
-	dictionary = response.dictionary;
-	refresh();
+var dictionary = null;
+
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		if (request.enable) {
+			refresh();
+		} else {
+			removeHighlights();
+		}
 });
 
 var dict = chrome.runtime.connect({name: "knownchinese-dict"});
@@ -43,28 +48,21 @@ addStyleString('\
     .knownchinese-enabled .knownchinese-element.knownword { background: -webkit-linear-gradient(left, transparent, rgba(0,255,0,.33), transparent); }\
 ');
 
-// var currentKnownWords = 0;
-// var currentUnknownWords = 0;
-// var currentKnownChars = 0;
-// var currentUnknownChars = 0;
-
-
 var currentState = 0;
 
 document.addEventListener('keydown', keyboardShortcuts);
 document.body.classList.add('knownchinese', 'knownchinese-enabled');
 
 function refresh() {
-    // currentKnownWords = 0;
-    // currentUnknownWords = 0;
-    // currentKnownChars = 0;
-    // currentUnknownChars = 0;
+	if (dictionary === null) {
+		chrome.runtime.sendMessage({want: "dictionary"}, function(response) {
+			dictionary = response.dictionary;
+			refresh();
+		});
+		return;
+	}
 
     walk(document.body);
-
-    // console.log("You know: ");
-    // console.log(currentKnownWords/(currentKnownWords+currentUnknownWords)*100 + "% of words ");
-    // console.log(currentKnownChars/(currentKnownChars+currentUnknownChars)*100 + "% of characters ");
 }
 
 function keyboardShortcuts(ev) {
@@ -85,6 +83,9 @@ function keyboardShortcuts(ev) {
     } else if (ev.shiftKey && ev.altKey && ev.keyCode==84) { // t
         removeHighlights();
         ev.stopPropagation();
+    } else if (ev.shiftKey && ev.altKey && ev.keyCode==79) { // o
+        chrome.runtime.sendMessage({want: "options"});
+        ev.stopPropagation();
     }
 }
 
@@ -100,7 +101,6 @@ function getSelectionText() {
 
 // Our walker function
 function walk(node) {
-    // I stole this function from here:
     // http://is.gd/mwZp7E
     var child, next;
     switch (node.nodeType) {

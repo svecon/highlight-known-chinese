@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+		<!-- <link rel="stylesheet" href="css/normalize.css"> -->
+		<!-- <link rel="stylesheet" href="css/main.css"> -->
+		<!-- <script src="js/vendor/modernizr-2.8.3.min.js"></script> -->
+		<style>
+			.container {
+				display: flex;
+			}
+			.container > div {
+				margin: 0 1em;
+			}
+			.form {
+				max-width: 50em;
+			}
+			.form textarea {
+				width: 100%;
+				height: 20em;
+				font-size: 3em;
+			}
+			.form input {
+				width: 100%;
+				height: 2em;
+				margin: 1em 0;
+			}
+
+			input[type=range] {
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Known Chinese</h1>
+		<div class='container'>
+			<div class='form'>
+				<h2>Your vocabulary</h2>
+				<p>Please put one word per line.</p>
+				<input type="submit" value="Add new characters" id='knownwords-save' />
+				<br />
+				<textarea autofocus=true id='knownwords-textarea'></textarea>
+				<br />
+				<input type="submit" value="Overwrite vocabulary" id='knownwords-overwrite' />
+			</div>
+
+			<div class='common-characters'>
+				<h2>100 most common characters</h2>
+<table>
+<tr><th>#</th><th>Character</th><th>Occurences</th><th>Cumulative percentile</th></tr>
+<tr><td>1</td><td>的</td><td>7922684</td><td>4.09432531783</td></tr>
+<tr><td>2</td><td>一</td><td>3050722</td><td>5.67089309742</td></tr>
+<tr><td>3</td><td>是</td><td>2615490</td><td>7.02253944928</td></tr>
+<tr><td>4</td><td>不</td><td>2237915</td><td>8.17906065392</td></tr>
+<tr><td>5</td><td>了</td><td>2128528</td><td>9.27905228304</td></tr>
+<tr><td>6</td><td>在</td><td>2009181</td><td>10.3173671567</td></tr>
+<tr><td>7</td><td>人</td><td>1867999</td><td>11.2827212715</td></tr>
+<tr><td>8</td><td>有</td><td>1782004</td><td>12.2036344486</td></tr>
+<tr><td>9</td><td>我</td><td>1690048</td><td>13.0770261318</td></tr>
+<tr><td>10</td><td>他</td><td>1595761</td><td>13.9016916951</td></tr>
+<tr><td>11</td><td>这</td><td>1552042</td><td>14.7037639291</td></tr>
+<tr><td>12</td><td>个</td><td>1199580</td><td>15.3236890409</td></tr>
+<tr><td>13</td><td>们</td><td>1169853</td><td>15.9282516811</td></tr>
+<tr><td>14</td><td>中</td><td>1104541</td><td>16.4990620505</td></tr>
+<tr><td>15</td><td>来</td><td>1079469</td><td>17.056915583</td></tr>
+<tr><td>16</td><td>上</td><td>1069575</td><td>17.6096560434</td></tr>
+<tr><td>17</td><td>大</td><td>1054064</td><td>18.1543806496</td></tr>
+<tr><td>18</td><td>为</td><td>1039036</td><td>18.6913390088</td></tr>
+<tr><td>19</td><td>和</td><td>1010465</td><td>19.2135322999</td></tr>
+<tr><td>20</td><td>国</td><td>985350</td><td>19.7227465323</td></tr>
+<tr><td>21</td><td>地</td><td>969349</td><td>20.2236916858</td></tr>
+<tr><td>22</td><td>到</td><td>965035</td><td>20.7224074283</td></tr>
+<tr><td>23</td><td>以</td><td>910627</td><td>21.1930059251</td></tr>
+<tr><td>24</td><td>说</td><td>874977</td><td>21.6451810318</td></tr>
+<tr><td>25</td><td>时</td><td>833532</td><td>22.0759379787</td></tr>
+<tr><td>26</td><td>要</td><td>811011</td><td>22.4950564076</td></tr>
+<tr><td>27</td><td>就</td><td>771108</td><td>22.8935535592</td></tr>
+<tr><td>28</td><td>出</td><td>755256</td><td>23.2838586328</td></tr>
+<tr><td>29</td><td>会</td><td>734888</td><td>23.6636378269</td></tr>
+<tr><td>30</td><td>可</td><td>723108</td><td>24.037329292</td></tr>
+<tr><td>31</td><td>也</td><td>710259</td><td>24.404380585</td></tr>
+<tr><td>32</td><td>你</td><td>705205</td><td>24.7688200459</td></tr>
+<tr><td>33</td><td>对</td><td>703632</td><td>25.1324466038</td></tr>
+<tr><td>34</td><td>生</td><td>682031</td><td>25.4849100859</td></tr>
+<tr><td>35</td><td>能</td><td>665358</td><td>25.8287572096</td></tr>
+<tr><td>36</td><td>而</td><td>649239</td><td>26.1642742736</td></tr>
+<tr><td>37</td><td>子</td><td>640640</td><td>26.4953475023</td></tr>
+<tr><td>38</td><td>那</td><td>638538</td><td>26.8253344486</td></tr>
+<tr><td>39</td><td>得</td><td>630688</td><td>27.1512646316</td></tr>
+<tr><td>40</td><td>于</td><td>630524</td><td>27.4771100619</td></tr>
+<tr><td>41</td><td>着</td><td>626326</td><td>27.8007860281</td></tr>
+<tr><td>42</td><td>下</td><td>621185</td><td>28.121805202</td></tr>
+<tr><td>43</td><td>自</td><td>611687</td><td>28.4379159507</td></tr>
+<tr><td>44</td><td>之</td><td>609003</td><td>28.752639648</td></tr>
+<tr><td>45</td><td>年</td><td>601887</td><td>29.0636859024</td></tr>
+<tr><td>46</td><td>过</td><td>589925</td><td>29.3685503729</td></tr>
+<tr><td>47</td><td>发</td><td>572904</td><td>29.6646186437</td></tr>
+<tr><td>48</td><td>后</td><td>570764</td><td>29.9595809943</td></tr>
+<tr><td>49</td><td>作</td><td>542791</td><td>30.2400873144</td></tr>
+<tr><td>50</td><td>里</td><td>537795</td><td>30.5180117759</td></tr>
+<tr><td>51</td><td>用</td><td>535480</td><td>30.7947398798</td></tr>
+<tr><td>52</td><td>道</td><td>534695</td><td>31.0710623073</td></tr>
+<tr><td>53</td><td>行</td><td>531848</td><td>31.3459134476</td></tr>
+<tr><td>54</td><td>所</td><td>523028</td><td>31.6162065431</td></tr>
+<tr><td>55</td><td>然</td><td>511026</td><td>31.8802971833</td></tr>
+<tr><td>56</td><td>家</td><td>509790</td><td>32.1437490771</td></tr>
+<tr><td>57</td><td>种</td><td>503344</td><td>32.4038697739</td></tr>
+<tr><td>58</td><td>事</td><td>499172</td><td>32.6618344431</td></tr>
+<tr><td>59</td><td>成</td><td>499007</td><td>32.9197138428</td></tr>
+<tr><td>60</td><td>方</td><td>492763</td><td>33.1743664362</td></tr>
+<tr><td>61</td><td>多</td><td>481689</td><td>33.4232961509</td></tr>
+<tr><td>62</td><td>经</td><td>481338</td><td>33.672044474</td></tr>
+<tr><td>63</td><td>么</td><td>477969</td><td>33.9190517481</td></tr>
+<tr><td>64</td><td>去</td><td>476270</td><td>34.1651810041</td></tr>
+<tr><td>65</td><td>法</td><td>466816</td><td>34.4064245736</td></tr>
+<tr><td>66</td><td>学</td><td>464261</td><td>34.646347757</td></tr>
+<tr><td>67</td><td>如</td><td>449036</td><td>34.8784028867</td></tr>
+<tr><td>68</td><td>都</td><td>439568</td><td>35.1055650948</td></tr>
+<tr><td>69</td><td>同</td><td>437611</td><td>35.3317159543</td></tr>
+<tr><td>70</td><td>现</td><td>433960</td><td>35.5559800314</td></tr>
+<tr><td>71</td><td>当</td><td>429274</td><td>35.7778224533</td></tr>
+<tr><td>72</td><td>没</td><td>428146</td><td>35.9990819415</td></tr>
+<tr><td>73</td><td>动</td><td>426839</td><td>36.2196659916</td></tr>
+<tr><td>74</td><td>面</td><td>425180</td><td>36.4393926952</td></tr>
+<tr><td>75</td><td>起</td><td>424933</td><td>36.6589917528</td></tr>
+<tr><td>76</td><td>看</td><td>424616</td><td>36.8784269896</td></tr>
+<tr><td>77</td><td>定</td><td>422538</td><td>37.0967883468</td></tr>
+<tr><td>78</td><td>天</td><td>419884</td><td>37.3137781563</td></tr>
+<tr><td>79</td><td>分</td><td>419382</td><td>37.5305085396</td></tr>
+<tr><td>80</td><td>还</td><td>415855</td><td>37.7454162218</td></tr>
+<tr><td>81</td><td>进</td><td>412166</td><td>37.9584174836</td></tr>
+<tr><td>82</td><td>好</td><td>411866</td><td>38.1712637099</td></tr>
+<tr><td>83</td><td>小</td><td>410987</td><td>38.383655682</td></tr>
+<tr><td>84</td><td>部</td><td>403066</td><td>38.5919541991</td></tr>
+<tr><td>85</td><td>其</td><td>403028</td><td>38.8002330784</td></tr>
+<tr><td>86</td><td>些</td><td>400528</td><td>39.0072199948</td></tr>
+<tr><td>87</td><td>主</td><td>399693</td><td>39.2137753956</td></tr>
+<tr><td>88</td><td>样</td><td>398149</td><td>39.4195328802</td></tr>
+<tr><td>89</td><td>理</td><td>398087</td><td>39.6252583241</td></tr>
+<tr><td>90</td><td>心</td><td>392228</td><td>39.8279559239</td></tr>
+<tr><td>91</td><td>她</td><td>388612</td><td>40.0287848286</td></tr>
+<tr><td>92</td><td>本</td><td>388118</td><td>40.2293584415</td></tr>
+<tr><td>93</td><td>前</td><td>381431</td><td>40.4264763122</td></tr>
+<tr><td>94</td><td>开</td><td>377012</td><td>40.6213105094</td></tr>
+<tr><td>95</td><td>但</td><td>374459</td><td>40.8148253542</td></tr>
+<tr><td>96</td><td>因</td><td>371612</td><td>41.0068689116</td></tr>
+<tr><td>97</td><td>只</td><td>370059</td><td>41.1981099018</td></tr>
+<tr><td>98</td><td>从</td><td>369958</td><td>41.3892986966</td></tr>
+<tr><td>99</td><td>想</td><td>368819</td><td>41.5798988732</td></tr>
+<tr><td>100</td><td>实</td><td>368494</td><td>41.7703310946</td></tr>
+</table>
+
+			</div>
+			<div class='help'>
+				<h2>Help</h2>
+				<h3>Keyboard shortcuts</h3>
+				<ul>
+					<li>Shift+Alt+R refresh highlights</li>
+					<li>Shift+Alt+T remove highlights</li>
+					<li>Shift+Alt+A add selected word to vocabulary</li>
+					<li>Shift+Alt+D delete selected word from vocabulary</li>
+					<li>Shift+Alt+O open options</li>
+				</ul>
+
+				<h2>Getting started</h2>
+				<div class='form'>
+					<p>To get you easily started, please guess how many characters you know and we will add them to your vocabulary.</p>
+					<p>How many characters do you think you know? <b>I know first <output id="known-slider-label">0 (0%)</output> of the most common characters.</b> </p>
+					<input type=range min=0 max=8780 step=1 id='known-slider' value=0 /> 
+					<input type=submit id='known-slider-submit' value="Save to vocabulary" /> 
+				</div>
+
+				<h2>Characters you should learn next</h2>
+				<h1 id='should-learn'></h1>
+			</div>
+
+		</div>
+		<script src="options.js"></script>
+	</body>
+</html>
