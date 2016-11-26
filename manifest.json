@@ -14,6 +14,10 @@
 			"run_at": "document_end"
 		}
 	],
+	"background": {
+		"scripts": ["background_script.js"],
+        "persistent": true
+	},
 	"web_accessible_resources": [
 		"cedict_ts.u8"
 	]
