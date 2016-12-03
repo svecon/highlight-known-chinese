@@ -40,6 +40,7 @@ function parseDictionary(progressEvent){
 
 var oReq = new XMLHttpRequest();
 oReq.addEventListener("load", parseDictionary);
+// https://www.mdbg.net/chindict/chindict.php?page=cedict
 oReq.open("GET", chrome.runtime.getURL("dictionaries/cedict_ts.u8"));
 oReq.send();
 
