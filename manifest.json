@@ -4,7 +4,7 @@
 	"manifest_version": 2,
 	"name": "Highlight Known Chinese Words",
 	"short_name": "Known Chinese",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Highlights Chinese words that you already know! Keep track of your vocabulary!",
 	"permissions": [ "storage" ],
 	"browser_action": {
