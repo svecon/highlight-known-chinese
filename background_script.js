@@ -82,12 +82,12 @@ function addToKnown(text) {
     if(dictionary[text] !== undefined) {
         knownWords.add(text);
     }
-    
-    // for (var i=0; i<text.length; i++) {
-    // 	if(dictionary[text[i]] !== undefined) {
-	   //      knownWords.add(text[i]);
-	   //  }
-    // }
+
+    for (var i=0; i<text.length; i++) {
+    	if(dictionary[text[i]] !== undefined) {
+	        knownWords.add(text[i]);
+	    }
+    }
 }
 
 function removeFromKnown(text) {
